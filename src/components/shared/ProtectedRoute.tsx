@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSyncExternalStore } from "react";
 import { getSession } from "@/lib/auth";
 
 type ProtectedRouteProps = {
@@ -10,15 +11,20 @@ type ProtectedRouteProps = {
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const router = useRouter();
-  const session = getSession();
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const session = isClient ? getSession() : null;
 
   useEffect(() => {
-    if (!session) {
+    if (isClient && !session) {
       router.replace("/login");
     }
-  }, [router, session]);
+  }, [isClient, router, session]);
 
-  if (!session) {
+  if (!isClient || !session) {
     return null;
   }
 
