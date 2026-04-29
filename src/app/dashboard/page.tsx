@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import type { Habit } from "@/types/habit";
 import { getSession, logoutUser } from "@/lib/auth";
@@ -27,13 +27,18 @@ function getTodayIsoDate(): string {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const session = getSession();
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const session = isClient ? getSession() : null;
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const todayIso = getTodayIsoDate();
-  const habits = session ? getHabitsByUser(session.userId) : [];
+  const habits = isClient && session ? getHabitsByUser(session.userId) : [];
 
   const closeForm = () => {
     setIsFormVisible(false);
@@ -95,7 +100,7 @@ export default function DashboardPage() {
         <header className="flex items-center justify-between rounded-lg bg-white p-4 shadow-sm">
           <div>
             <h1 className="text-xl font-semibold text-slate-900">Habit Tracker</h1>
-            {session ? (
+            {isClient && session ? (
               <p className="text-sm text-slate-600">{session.email}</p>
             ) : null}
           </div>
