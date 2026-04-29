@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/lib/auth";
+import { SignIn, EnvelopeSimple, LockKey } from "@phosphor-icons/react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -29,41 +30,60 @@ export function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-sm space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+      className="w-full max-w-sm space-y-5 rounded-2xl border border-zinc-100 bg-white p-8 shadow-lg shadow-zinc-200/50"
     >
-      <h1 className="text-2xl font-semibold text-slate-900">Log in</h1>
-
-      <div className="space-y-1">
-        <label htmlFor="login-email" className="text-sm font-medium text-slate-700">
-          Email
-        </label>
-        <input
-          id="login-email"
-          data-testid="auth-login-email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-          className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-        />
+      <div className="flex items-center gap-3 mb-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-teal-600">
+          <SignIn size={24} weight="duotone" />
+        </div>
+        <h1 className="text-2xl font-bold text-zinc-900">Welcome Back</h1>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-1.5">
+        <label htmlFor="login-email" className="text-sm font-semibold text-zinc-700">
+          Email Address
+        </label>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400">
+            <EnvelopeSimple size={18} />
+          </div>
+          <input
+            id="login-email"
+            data-testid="auth-login-email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            suppressHydrationWarning
+            className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2.5 pl-10 pr-3 text-zinc-900 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/10"
+            placeholder="you@example.com"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
         <label
           htmlFor="login-password"
-          className="text-sm font-medium text-slate-700"
+          className="text-sm font-semibold text-zinc-700"
         >
           Password
         </label>
-        <input
-          id="login-password"
-          data-testid="auth-login-password"
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-          className="w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-        />
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400">
+            <LockKey size={18} />
+          </div>
+          <input
+            id="login-password"
+            data-testid="auth-login-password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+            suppressHydrationWarning
+            className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2.5 pl-10 pr-3 text-zinc-900 outline-none transition focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/10"
+            placeholder="••••••••"
+          />
+        </div>
       </div>
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -71,9 +91,9 @@ export function LoginForm() {
       <button
         data-testid="auth-login-submit"
         type="submit"
-        className="w-full rounded-md bg-slate-900 px-4 py-2 font-medium text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        className="mt-2 w-full rounded-xl bg-zinc-900 py-2.5 font-semibold text-white shadow-md transition hover:bg-zinc-800 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-zinc-900/20 active:scale-[0.98]"
       >
-        Log in
+        Log In
       </button>
     </form>
   );

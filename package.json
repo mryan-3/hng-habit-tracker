@@ -13,6 +13,7 @@
     "test": "npm run test:unit && npm run test:integration && npm run test:e2e"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4"
