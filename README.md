@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Habit Tracker PWA
 
-## Getting Started
+## Project Overview
 
-First, run the development server:
+Habit Tracker is a mobile-first Progressive Web App built with Next.js App Router and TypeScript.  
+It supports local account signup/login, user-scoped habit tracking, streak calculation, and offline app shell loading through a service worker.
+
+## Setup Instructions
+
+1. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install Playwright browsers (first-time only):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm exec playwright install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Run Instructions
 
-## Learn More
+Start development server:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Test Instructions
 
-## Deploy on Vercel
+Run unit tests with coverage:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm test:unit
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Run integration tests:
+
+```bash
+pnpm test:integration
+```
+
+Run end-to-end tests:
+
+```bash
+pnpm test:e2e
+```
+
+Run all tests:
+
+```bash
+pnpm test
+```
+
+## Local Persistence Structure
+
+The app stores all data in `localStorage` using these keys:
+
+- `habit-tracker-users`: array of users
+  - `{ id, email, password, createdAt }`
+- `habit-tracker-session`: active session or `null`
+  - `{ userId, email }`
+- `habit-tracker-habits`: array of habits
+  - `{ id, userId, name, description, frequency, createdAt, completions }`
+
+`completions` is an array of unique ISO calendar dates (`YYYY-MM-DD`).
+
+## PWA Implementation
+
+PWA support is implemented with:
+
+- `public/manifest.json` with app metadata and required icons
+- `public/icons/icon-192.png` and `public/icons/icon-512.png`
+- `public/sw.js` service worker for app shell caching and offline-safe navigation handling
+- `src/components/shared/ServiceWorkerRegistration.tsx` for client-side SW registration
+- manifest and viewport metadata set in `src/app/layout.tsx`
+
+Behavior:
+
+- App is installable in supported browsers.
+- App shell routes are cached after first load.
+- Offline revisit does not hard-crash and serves cached shell routes.
+
+## Trade-offs and Limitations
+
+- Authentication is local-only and not secure for production.
+- Data is device/browser scoped and can be cleared by the user.
+- No backend sync, cross-device sync, or account recovery.
+- Service worker strategy is intentionally simple for deterministic stage requirements.
+- Tests are optimized for deterministic local behavior and PRD contract compliance.
+
+## Required Test Mapping
+
+- `tests/unit/slug.test.ts`
+  - verifies slug generation rules for habit card test IDs
+- `tests/unit/validators.test.ts`
+  - verifies habit name validation constraints and exact error messages
+- `tests/unit/streaks.test.ts`
+  - verifies deterministic streak calculation behavior
+- `tests/unit/habits.test.ts`
+  - verifies completion toggling immutability and persistence helpers
+- `tests/integration/auth-flow.test.tsx`
+  - verifies signup/login flows and session behavior at component level
+- `tests/integration/habit-form.test.tsx`
+  - verifies create/edit/delete/toggle behavior from dashboard interactions
+- `tests/e2e/app.spec.ts`
+  - verifies route protection, splash redirects, auth flow, habit lifecycle, persistence, logout, and offline cached shell behavior in browser
