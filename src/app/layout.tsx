@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ServiceWorkerRegistration } from "@/components/shared/ServiceWorkerRegistration";
+import { InstallPrompt } from "@/components/shared/InstallPrompt";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegistration />
         {children}
+        <InstallPrompt />
       </body>
     </html>
   );
